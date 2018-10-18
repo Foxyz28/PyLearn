@@ -5,21 +5,28 @@ import re
 
 
 def get_html(url):
-    page = request.urlopen(url)
+    reg = request.Request(url)
+    reg.add_header("user-agent", "Mozilla/5.0")
+    page = request.urlopen(reg)
     html = page.read()
-    htmlSTR = html.decode('utf-8')
-    return htmlSTR
+    htmlstr = html.decode('utf-8')
+    return htmlstr
 
 
-def get_img(html):
-    reg = r'src="(.+?\.jpg)" width'
-    reg_img = re.compile(reg)
-    imglist = reg_img.findall(html)
+def get_dgkID(html):
+    reg = r'content="sku:\d{3}\-\d{4}\-\d\-\w{2}"'
+    reg_dgkid = re.compile(reg)
+    dgkidlist = reg_dgkid.findall(html)
     x = 0
-    for img in imglist:
-        print(img)
-        request.urlretrieve(img, '%s.jpg' % x)
-        x = x + 1
+    for dgkid in dgkidlist:
+        print(dgkid)
+    return
+
+
+def save_html(html):
+    pagefile = open('pageFile.html', 'w', encoding='utf-8')
+    pagefile.write(html)
+    pagefile.close()
     return
 
 
@@ -30,7 +37,11 @@ if url:
 else:
     url = '__defaulturl__'
 
-get_img(get_html(url))
+
+pp = get_html(url)
+get_dgkID(pp)
+save_html(pp)
+
 
 # pageFile = open('pagecode.txt', 'w', encoding='utf-8')
 # pageFile.write(htmlcode)
