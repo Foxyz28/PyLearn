@@ -6,7 +6,7 @@ import re
 
 def get_html(url):
     reg = request.Request(url)
-    reg.add_header("user-agent", "Mozilla/5.0")
+    reg.add_header("user-agent", "Mozilla/5.0 (Windows NT 6.2) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.12 Safari/535.11")
     page = request.urlopen(reg)
     html = page.read()
     htmlstr = html.decode('utf-8')
@@ -30,8 +30,9 @@ def save_html(html):
     return
 
 
-print('请输入URL: ')
-url = input()
+# print('请输入URL: ')
+# url = input()
+url = 'https://www.digikey.com.cn/product-detail/zh/kemet/C0402C220K5GACTU/399-7775-2-ND/2196444'
 if url:
     pass
 else:
