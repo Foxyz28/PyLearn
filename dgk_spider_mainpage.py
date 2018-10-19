@@ -71,11 +71,15 @@ def get_maininfo(text):    # 获取 text 内的 dgkID
     n = 1
     while n <= 25:
         productID = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/text()' % n)    # 提取 productID
+        detailurl = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/@href' % n)  # 提取 detail link
         #  tr[4] ~ tr[28]
         a = len(productID)
         # print(a)
         for productIDp in productID:
             print(productIDp)
+        for detailurlp in detailurl:
+            detailurlpp = 'https://www.digikey.com.cn' + detailurlp
+            print(detailurlpp)
         n = n + 1
 
 
@@ -86,7 +90,7 @@ def save_html(html, filename='main0201.html', path='download'):    # 将读取�
         f.write(html)
 
 
-maxpage = 10
+maxpage = 1
 pagenum = 1
 while pagenum <= maxpage:
     urlbf = 'https://www.digikey.com.cn/products/zh/电容器/陶瓷电容器/60?formName=KeywordSearchForm&pageNumber='
