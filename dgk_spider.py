@@ -75,9 +75,7 @@ def get_dgkID(text):    # 获取 text 内的 dgkID
     for qtyavailablep in qtyavailable:
         print('        现有数量：', qtyavailablep)
     a = 0
-    for x in pricetag:
-        a = a + 1
-    a = a - 1
+    a = len(pricetag) - 1
     y = 1
     print('\n')
     while y <= a:
@@ -89,7 +87,6 @@ def get_dgkID(text):    # 获取 text 内的 dgkID
         for singlepricep in singleprice:
             print('出售单价：%s \n' % singlepricep)
         y = y + 1
-
 
 
 def save_html(html, filename='temp.html', path='download'):    # 将读取到的 html 写入文件
