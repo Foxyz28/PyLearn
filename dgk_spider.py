@@ -97,6 +97,4 @@ while pagenum <= maxpage:
     pagenum = pagenum + 1
 
 conn.close()
-# pp = get_html(url)
-# get_maininfo(pp)
-# save_html(pp)
+
