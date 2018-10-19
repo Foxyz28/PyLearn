@@ -2,6 +2,7 @@
 
 import requests
 import os
+import time
 from lxml import html
 
 
@@ -48,54 +49,58 @@ header = {
 
 # print('请输入URL: ')
 # url = input()
-url = 'https://www.digikey.com.cn/product-detail/zh/kemet/C0402C220K5GACTU/399-7775-6-ND/3472306'    # 设置 url
+
+#  设置url
+'''
 if url:    # 判断 url 是否合法
     pass
 else:
     url = '__defaulturl__'
+'''
 
 
-def get_html(url):    # 抓取 url 内的信息
-    reg = requests.get(url, headers=header)    # 加入 headers 抓取信息
+def get_html(inputurl):    # 抓取 url 内的信息
+    reg = requests.get(inputurl, headers=header)    # 加入 headers 抓取信息
     page = reg.content    # 获取内容
     # finalpage = html.fromstring(page)    # 将 string 转为 element 对象, 方便 xpath 处理
     return page
 
 
-def get_dgkID(text):    # 获取 text 内的 dgkID
+def get_maininfo(text):    # 获取 text 内的 dgkID
     page = html.fromstring(text)  # 将 string 转为 element 对象, 方便 xpath 处理
-    productID = page.xpath('//*[@id="PartNumber"]/text()')    # 提取 productID
-    model = page.xpath('//*[@itemprop="model"]/text()')    # 提取 model
-    qtyavailable = page.xpath('//*[@id="hiddenQtyAvailable"]/text()')    # 提取现有数量
-    pricetag = page.xpath('//*[@id="pricing"]/tr')
-    for productIDp in productID:    # productIDp = productID + p(rint) 下同
-        print('德捷电子 零件编号：', productIDp)
-    for modelp in model:
-        print('制造厂商 零件编号：', modelp)
-    for qtyavailablep in qtyavailable:
-        print('        现有数量：', qtyavailablep)
-    a = 0
-    a = len(pricetag) - 1
-    y = 1
-    print('\n')
-    while y <= a:
-        z = y + 1
-        pricestep = page.xpath('//*[@id="pricing"]/tr[%d]/td[1]/text()' % z)
-        for pricestepp in pricestep:
-            print('价格分段：%s ' % pricestepp)
-        singleprice = page.xpath('//*[@id="pricing"]/tr[%d]/td[2]/text()' % z)
-        for singlepricep in singleprice:
-            print('出售单价：%s \n' % singlepricep)
-        y = y + 1
+    n = 1
+    while n <= 25:
+        productID = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/text()' % n)    # 提取 productID
+        #  tr[4] ~ tr[28]
+        a = len(productID)
+        # print(a)
+        for productIDp in productID:
+            print(productIDp)
+        n = n + 1
 
 
-def save_html(html, filename='temp.html', path='download'):    # 将读取到的 html 写入文件
+def save_html(html, filename='main0201.html', path='download'):    # 将读取到的 html 写入文件
     filepath = os.path.join(path, filename)
     with open(filepath, 'wb') as f:
         print('output file path = ', filepath)
         f.write(html)
 
 
-pp = get_html(url)
-get_dgkID(pp)
+maxpage = 10
+pagenum = 1
+while pagenum <= maxpage:
+    urlbf = 'https://www.digikey.com.cn/products/zh/电容器/陶瓷电容器/60?formName=KeywordSearchForm&pageNumber='
+    urlaf = '&sort=&sortDescending=&sortType=&qtyRequested=&c=60&keywords=&rfUofM=&PV=17210%7C4279783534%7C安装类型&PV' \
+            '=17169%7C4279742636%7C封装%2F外壳&PV=18753%7C4279795329%7C零件状态&auto=false '
+    urlnum = '%d' % pagenum
+    url = urlbf + urlnum + urlaf
+    # print(url)
+    print('第%d页' % pagenum)
+    page = get_html(url)
+    get_maininfo(page)
+    time.sleep(1)
+    pagenum = pagenum + 1
+
+# pp = get_html(url)
+# get_maininfo(pp)
 # save_html(pp)
