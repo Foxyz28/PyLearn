@@ -43,12 +43,7 @@ header = {
 }
 
 
-# header = {}
-
-
-# print('请输入URL: ')
-# url = input()
-url = 'https://www.digikey.com.cn/product-detail/zh/kemet/C0402C220K5GACTU/399-7775-6-ND/3472306'    # 设置 url
+url = 'https://www.digikey.com.cn/product-detail/zh/kemet/C0402C220K5GACTU/399-7775-2-ND/2196444'    # 设置 url
 if url:    # 判断 url 是否合法
     pass
 else:
@@ -67,13 +62,21 @@ def get_detailinfo(text):    # 获取 text 内的 dgkID
     productID = page.xpath('//*[@id="PartNumber"]/text()')    # 提取 productID
     model = page.xpath('//*[@itemprop="model"]/text()')    # 提取 model
     qtyavailable = page.xpath('//*[@id="hiddenQtyAvailable"]/text()')    # 提取现有数量
-    pricetag = page.xpath('//*[@id="pricing"]/tr')
-    for productIDp in productID:    # productIDp = productID + p(rint) 下同
-        print('德捷电子 零件编号：', productIDp)
-    for modelp in model:
-        print('制造厂商 零件编号：', modelp)
-    for qtyavailablep in qtyavailable:
-        print('现有数量：', qtyavailablep)
+    pricetag = page.xpath('//*[@id="pricing"]/tr')    # 提取价格
+    productvalue = page.xpath('//*[@id="SpecificationTable1"]/tr[1]/td/text()')    # 提取容值
+    tolerance = page.xpath('//*[@id="SpecificationTable1"]/tr[2]/td/text()')
+    voltage = page.xpath('//*[@id="SpecificationTable1"]/tr[3]/td/text()')
+    worktemp = page.xpath('//*[@id="SpecificationTable1"]/tr[5]/td/text()')
+    moldsize = page.xpath('//*[@id="SpecificationTable1"]/tr[11]/td/text()')
+    test = page.xpath('//*[@id="SpecificationTable1"]/tr[11]/td/text()')
+    print('德捷电子 零件编号：', productID[0])
+    print('制造厂商 零件编号：', model[0])
+    print('现有数量：', qtyavailable[0])
+    print('Value：', productvalue[0])
+    print('误差：', tolerance[0])
+    print('电压：', voltage[0])
+    print('工作温度：', worktemp[0])
+    print('尺寸：', moldsize[0])
     a = 0
     a = len(pricetag) - 1
     y = 1
@@ -81,11 +84,9 @@ def get_detailinfo(text):    # 获取 text 内的 dgkID
     while y <= a:
         z = y + 1
         pricestep = page.xpath('//*[@id="pricing"]/tr[%d]/td[1]/text()' % z)
-        for pricestepp in pricestep:
-            print('价格分段：%s ' % pricestepp)
+        print('价格分段：%s ' % pricestep[0])
         singleprice = page.xpath('//*[@id="pricing"]/tr[%d]/td[2]/text()' % z)
-        for singlepricep in singleprice:
-            print('出售单价：%s \n' % singlepricep)
+        print('出售单价：%s \n' % singleprice[0])
         y = y + 1
 
 

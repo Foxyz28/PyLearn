@@ -12,6 +12,11 @@ ID            INT PRIMARY KEY NOT NULL,
 DETAILURL     TEXT,
 PRODUCTID     TEXT,
 VENDORID      TEXT,
+PRODUCTVALUE  TEXT,
+TOLERANCE     TEXT,
+VOLTAGE       TEXT,
+WORKTEMP      TEXT,
+MOLDSIZE      TEXT,
 QTYAVAILABLE  INT);''')
 print('Table created successfully')
 conn.commit()

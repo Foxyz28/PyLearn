@@ -75,24 +75,50 @@ while pagenum <= maxpage:
     url = urlbf + urlnum + urlaf
     # print(url)
     print('第%d页' % pagenum)
+    print('\n')
     page = get_html(url)
     page = html.fromstring(page)
     n = 1
     uurl = 'https://www.digikey.com.cn'
     pproductID = '???'
     while n <= 25:
-        productID = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/text()' % n)    # 提取 productID
+        mainproductID = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/text()' % n)    # 提取 productID
         detailurl = page.xpath('//*[@id="accordionNav"]/tr[%d]/td[4]/a/@href' % n)  # 提取 detail link
-        for productIDp in productID:
-            print(productIDp)
-            pproductID = productIDp
-        for detailurlp in detailurl:
-            detailurlpp = 'https://www.digikey.com.cn' + detailurlp
-            uurl = detailurlpp
-        c.execute("INSERT INTO CAPACITANCE (ID,DETAILURL,PRODUCTID) VALUES (?, ?, ?)", (calID, uurl, pproductID))
+        pmainproductID = mainproductID[0]
+        uurl = 'https://www.digikey.com.cn' + detailurl[0]
+        c.execute("INSERT INTO CAPACITANCE (ID,DETAILURL,PRODUCTID) VALUES (?, ?, ?)", (calID, uurl, pmainproductID))
         conn.commit()
+        # pulldata = c.execute("SELECT * from CAPACITANCE WHERE ID = ?", (str(calID),))
+        detailpage = get_html(uurl)
+        detailpage = html.fromstring(detailpage)
+        model = detailpage.xpath('//*[@itemprop="model"]/text()')  # 提取 model
+        qtyavailable = detailpage.xpath('//*[@id="hiddenQtyAvailable"]/text()')  # 提取现有数量
+        productvalue = detailpage.xpath('//*[@id="SpecificationTable1"]/tr[1]/td/text()')  # 提取容值
+        tolerance = detailpage.xpath('//*[@id="SpecificationTable1"]/tr[2]/td/text()')    # 提取误差
+        voltage = detailpage.xpath('//*[@id="SpecificationTable1"]/tr[3]/td/text()')    # 提取电压
+        worktemp = detailpage.xpath('//*[@id="SpecificationTable1"]/tr[5]/td/text()')    # 提取工作温度
+        moldsize = detailpage.xpath('//*[@id="SpecificationTable1"]/tr[11]/td/text()')    # 提取封装尺寸
+        c.execute("UPDATE CAPACITANCE set VENDORID = ? where ID = ?", (model[0], calID))
+        c.execute("UPDATE CAPACITANCE set QTYAVAILABLE = ? where ID = ?", (qtyavailable[0], calID))
+        c.execute("UPDATE CAPACITANCE set PRODUCTVALUE = ? where ID = ?", (productvalue[0], calID))
+        c.execute("UPDATE CAPACITANCE set TOLERANCE = ? where ID = ?", (tolerance[0], calID))
+        c.execute("UPDATE CAPACITANCE set VOLTAGE = ? where ID = ?", (voltage[0], calID))
+        c.execute("UPDATE CAPACITANCE set WORKTEMP = ? where ID = ?", (worktemp[0], calID))
+        c.execute("UPDATE CAPACITANCE set MOLDSIZE = ? where ID = ?", (moldsize[0], calID))
+        conn.commit()
+        print('编号：', mainproductID[0])
+        print('URL：', uurl)
+        print('制造厂商 零件编号：', model[0])
+        print('现有数量：', qtyavailable[0])
+        print('Value：', productvalue[0])
+        print('误差：', tolerance[0])
+        print('电压：', voltage[0])
+        print('工作温度：', worktemp[0])
+        print('尺寸：', moldsize[0])
+        print('\n')
         n = n + 1
         calID = calID + 1
+        time.sleep(1)
     time.sleep(1)
     pagenum = pagenum + 1
 
