@@ -10,7 +10,7 @@ print('Open database successfully')
 
 n = 2
 
-cursor = c.execute("SELECT * from CAPACITANCE")
+cursor = c.execute("SELECT * from CAPACITANCE WHERE PRODUCTVALUE = '3.3pF'")
 for raw in cursor:
     print('ID: ', raw[0])
     print('URL: ', raw[1])
